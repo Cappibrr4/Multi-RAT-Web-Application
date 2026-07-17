@@ -1,0 +1,250 @@
+/* ============================================================
+   Test Runner Page styles
+   ============================================================ */
+
+.tr-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.tr-title {
+    margin: 0 0 4px 0;
+    color: #14243B;
+}
+
+.tr-subtitle {
+    margin: 0 0 20px 0;
+    color: #94A3B8;
+    font-size: 14px;
+}
+
+/* ---- Controls bar ---- */
+.tr-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    background-color: white;
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.tr-field-label {
+    display: block;
+    font-size: 12px;
+    color: #64748B;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.tr-select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #0D9488;
+    border-radius: 4px;
+    min-width: 180px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.tr-select:disabled {
+    cursor: not-allowed;
+    background-color: #f1f5f9;
+    color: #94A3B8;
+}
+
+.tr-select--duration {
+    min-width: 120px;
+}
+
+/* ---- Text / number inputs (server IP + port) ---- */
+.tr-input {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #0D9488;
+    border-radius: 4px;
+    min-width: 180px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.tr-input--port {
+    min-width: 100px;
+    width: 100px;
+}
+
+.tr-input:disabled {
+    cursor: not-allowed;
+    background-color: #f1f5f9;
+    color: #94A3B8;
+}
+
+.tr-input--error {
+    border-color: #B91C1C;
+    background-color: #FEF2F2;
+}
+
+/* ---- Buttons ---- */
+.tr-btn {
+    padding: 11px 28px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+
+.tr-btn--start {
+    background-color: #15803D;
+}
+
+.tr-btn--stop {
+    background-color: #B91C1C;
+}
+
+.tr-btn:disabled {
+    background-color: #94A3B8;
+    cursor: not-allowed;
+}
+
+/* ---- Status badge ---- */
+.tr-badge {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tr-badge--up {
+    color: #15803D;
+}
+
+.tr-badge--down {
+    color: #B45309;
+}
+
+/* ---- Scheduler apply status ---- */
+.tr-sched-status {
+    margin: -8px 0 18px 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.tr-sched-status--ok {
+    background-color: #DCFCE7;
+    color: #15803D;
+}
+
+.tr-sched-status--err {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}
+
+.tr-sched-status--info {
+    background-color: #EFF6FF;
+    color: #475569;
+}
+
+/* ---- Chart card ---- */
+.tr-card {
+    background-color: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.tr-card-title {
+    margin: 0 0 15px 0;
+    color: #14243B;
+}
+
+/* ---- Bottom grid: result + log ---- */
+.tr-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.tr-result {
+    background-color: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.tr-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.tr-empty {
+    color: #94A3B8;
+    font-size: 13px;
+}
+
+.tr-demo-note {
+    color: #B45309;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+.tr-error-note {
+    color: #B91C1C;
+    background-color: #FEE2E2;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+/* ---- Status log (dark box) ---- */
+.tr-log {
+    background-color: #0B1220;
+    border-radius: 8px;
+    padding: 18px;
+    color: #93C5FD;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.tr-log-title {
+    color: #5EEAD4;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.tr-log-idle {
+    color: #64748B;
+}
+
+/* ---- Small stat block ---- */
+.tr-stat-label {
+    font-size: 11px;
+    color: #94A3B8;
+    margin-bottom: 4px;
+}
+
+.tr-stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #14243B;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .tr-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}

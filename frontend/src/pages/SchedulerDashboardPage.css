@@ -1,0 +1,265 @@
+/* ============================================================
+   Scheduler Dashboard styles
+   ============================================================ */
+
+.sd-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.sd-head {
+    margin-bottom: 20px;
+}
+
+.sd-title {
+    margin: 0 0 4px 0;
+    color: #14243B;
+}
+
+.sd-subtitle {
+    margin: 0;
+    color: #94A3B8;
+    font-size: 14px;
+}
+
+/* ---- Controls bar ---- */
+.sd-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    background-color: white;
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.sd-field-label {
+    display: block;
+    font-size: 12px;
+    color: #64748B;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.sd-select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #0D9488;
+    border-radius: 4px;
+    min-width: 200px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.sd-badge {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+.sd-badge--live {
+    color: #15803D;
+    background-color: #DCFCE7;
+}
+
+.sd-badge--demo {
+    color: #B45309;
+    background-color: #FEF3C7;
+}
+
+.sd-clear {
+    margin-left: auto;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    background-color: white;
+    color: #64748B;
+    cursor: pointer;
+}
+
+.sd-clear:hover {
+    background-color: #F1F5F9;
+    color: #B91C1C;
+    border-color: #FCA5A5;
+}
+
+/* ---- Summary stat cards ---- */
+.sd-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.sd-stat {
+    background-color: white;
+    border: 2px solid #0D9488;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sd-stat-label {
+    font-size: 12px;
+    color: #94A3B8;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.sd-stat-value {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* ---- Run metadata ---- */
+.sd-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    background-color: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.sd-meta-label {
+    font-size: 11px;
+    color: #94A3B8;
+    margin-bottom: 4px;
+}
+
+.sd-meta-value {
+    font-size: 15px;
+    font-weight: bold;
+    color: #14243B;
+}
+
+/* ---- Cards (chart + table) ---- */
+.sd-card {
+    background-color: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.sd-card-title {
+    margin: 0 0 15px 0;
+    color: #14243B;
+}
+
+/* ---- Per-subflow cards ---- */
+.sd-subflows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.sd-subflow {
+    border: 2px solid #0D9488;
+    border-radius: 8px;
+    padding: 14px;
+    background-color: #fff;
+}
+
+.sd-subflow-name {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: Consolas, monospace;
+}
+
+.sd-subflow-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #64748B;
+    padding: 4px 0;
+}
+
+.sd-subflow-row strong {
+    color: #14243B;
+}
+
+/* ---- Comparison table ---- */
+.sd-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.sd-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: #64748B;
+    font-size: 12px;
+    border-bottom: 2px solid #E2E8F0;
+}
+
+.sd-table td {
+    padding: 10px 12px;
+    color: #14243B;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.sd-table tbody tr {
+    cursor: pointer;
+}
+
+.sd-table tbody tr:hover {
+    background-color: #F8FAFC;
+}
+
+.sd-row--active {
+    background-color: #F0FDFA;
+}
+
+.sd-row--active td {
+    font-weight: bold;
+}
+
+/* ---- Empty state ---- */
+.sd-empty {
+    background-color: white;
+    border: 1px dashed #CBD5E1;
+    border-radius: 8px;
+    padding: 60px 20px;
+    text-align: center;
+    color: #64748B;
+    max-width: 520px;
+    margin: 40px auto 0;
+}
+
+.sd-empty-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.sd-empty h3 {
+    margin: 0 0 8px 0;
+    color: #14243B;
+}
+
+.sd-empty p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .sd-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

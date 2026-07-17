@@ -1,0 +1,130 @@
+/* ============================================================
+   Home Page (Technical Architecture) styles
+   ============================================================ */
+
+.home-page {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* ---- Hero banner ---- */
+.home-hero {
+    background: linear-gradient(135deg, #5b6ee1 0%, #7b52c9 100%);
+    color: white;
+    padding: 48px 20px;
+    text-align: center;
+}
+
+.home-hero-title {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.home-hero-subtitle {
+    margin: 10px 0 0 0;
+    font-size: 17px;
+    opacity: 0.9;
+}
+
+/* ---- Content wrapper ---- */
+.home-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.home-intro {
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ---- Protocol tabs ---- */
+.home-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 24px 0;
+}
+
+.home-tab {
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: white;
+    color: #64748B;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+}
+
+.home-tab.is-active {
+    background-color: #0D9488;
+    color: white;
+}
+
+/* ---- Scheduler cards grid ---- */
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.home-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-top: 4px solid #94A3B8;
+}
+
+.home-card.is-novel {
+    border-top-color: #0D9488;
+}
+
+.home-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.home-card-name {
+    margin: 0;
+    color: #14243B;
+    font-size: 19px;
+}
+
+.home-badge {
+    background-color: #0D9488;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.home-card-tag {
+    font-size: 12px;
+    color: #94A3B8;
+    margin: 4px 0 10px 0;
+}
+
+.home-card-desc {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0 0 12px 0;
+}
+
+.home-card-formula {
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    color: #334155;
+    background-color: #F1F5F9;
+    border-radius: 4px;
+    padding: 8px 10px;
+    overflow-x: auto;
+}
