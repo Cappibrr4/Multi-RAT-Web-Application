@@ -36,8 +36,6 @@ const SCHED_LABELS = {
 };
 const prettyScheduler = (name) => SCHED_LABELS[name] || name;
 
-const DURATIONS = [10, 30, 60, 120, 300];
-
 const isValidHost = (h) => {
     if (!h) return false;
     const ipv4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
@@ -46,6 +44,7 @@ const isValidHost = (h) => {
     return /^[a-zA-Z0-9.-]+$/.test(h);
 };
 const isValidPort = (p) => Number.isInteger(Number(p)) && Number(p) >= 1 && Number(p) <= 65535;
+const isValidDuration = (d) => Number.isInteger(Number(d)) && Number(d) >= 1;
 
 const MpquicTestRunnerPage = () => {
     const [schedulers, setSchedulers] = useState(FALLBACK_SCHEDULERS);
@@ -54,7 +53,7 @@ const MpquicTestRunnerPage = () => {
     const [live, setLive] = useState(false);        // scheduler list came from the backend
     const [building, setBuilding] = useState(false); // editing scheduler.go + go build
     const [schedStatus, setSchedStatus] = useState(null);
-    const [duration, setDuration] = useState(30);
+    const [duration, setDuration] = useState('30');
     const [serverIp, setServerIp] = useState('68.183.225.112');
     const [serverPort, setServerPort] = useState(6121);   // common quic-go port
     const [running, setRunning] = useState(false);
@@ -160,7 +159,7 @@ const MpquicTestRunnerPage = () => {
             scheduler,
             protocol: 'mpquic',
             target: `${serverIp}:${serverPort}`,
-            duration,
+            duration: Number(duration),
             demo: !!summaryObj.demo,
             summary: summaryObj,
             series: pts,
@@ -179,7 +178,7 @@ const MpquicTestRunnerPage = () => {
         const r0 = await fetch(`${BACKEND_URL}/api/mpquic/iperf/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ duration, server_ip: serverIp, server_port: Number(serverPort) }),
+            body: JSON.stringify({ duration: Number(duration), server_ip: serverIp, server_port: Number(serverPort) }),
         });
         const d0 = await r0.json().catch(() => ({}));
         if (!r0.ok || d0.ok === false) {
@@ -246,7 +245,7 @@ const MpquicTestRunnerPage = () => {
                 seriesRef.current = next;
                 return next;
             });
-            if (tickRef.current >= duration) stopRun(true);
+            if (tickRef.current >= Number(duration)) stopRun(true);
         }, 1000);
     };
 
@@ -300,7 +299,7 @@ const MpquicTestRunnerPage = () => {
             const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
             const summaryObj = {
                 scheduler,
-                duration,
+                duration: Number(duration),
                 target: `${serverIp}:${serverPort}`,
                 throughput_mbps: Number(avg.toFixed(2)),
                 retransmits: Math.floor(Math.random() * 40),
@@ -368,22 +367,22 @@ const MpquicTestRunnerPage = () => {
                 </div>
 
                 <div>
-                    <label className="tr-field-label">DURATION</label>
-                    <select
-                        className="tr-select tr-select--duration"
+                    <label className="tr-field-label">DURATION (seconds)</label>
+                    <input
+                        className={`tr-input tr-input--port ${duration && !isValidDuration(duration) ? 'tr-input--error' : ''}`}
+                        type="text"
                         value={duration}
                         disabled={running}
-                        onChange={(e) => setDuration(Number(e.target.value))}
-                    >
-                        {DURATIONS.map(d => <option key={d} value={d}>{d} seconds</option>)}
-                    </select>
+                        placeholder="e.g. 60"
+                        onChange={(e) => setDuration(e.target.value)}
+                    />
                 </div>
 
                 {!running ? (
                     <button
                         className="tr-btn tr-btn--start"
                         onClick={startRun}
-                        disabled={building || !isValidHost(serverIp) || !isValidPort(serverPort)}
+                        disabled={building || !isValidHost(serverIp) || !isValidPort(serverPort) || !isValidDuration(duration)}
                     >▶ Start</button>
                 ) : (
                     <button className="tr-btn tr-btn--stop" onClick={() => stopRun(false)}>■ Stop</button>

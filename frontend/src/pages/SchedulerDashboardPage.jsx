@@ -3,7 +3,7 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid,
     Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { loadTestResults, clearTestResults } from '../utils/testResults';
+import { loadTestResults, deleteTestResults } from '../utils/testResults';
 import './SchedulerDashboardPage.css';
 
 // Colors assigned to subflows (interfaces) in order.
@@ -21,6 +21,7 @@ const subflowColor = (i) => SUBFLOW_COLORS[i % SUBFLOW_COLORS.length];
 const SchedulerDashboardPage = () => {
     const [results, setResults] = useState({});
     const [selected, setSelected] = useState(null);
+    const [checked, setChecked] = useState(new Set());
 
     // Load saved results on mount, and refresh when another tab writes or when
     // the user returns to this tab after running a test.
@@ -50,8 +51,26 @@ const SchedulerDashboardPage = () => {
         }
     }, [records, results, selected]);
 
+    const toggleCheck = (label) => {
+        setChecked(prev => {
+            const next = new Set(prev);
+            next.has(label) ? next.delete(label) : next.add(label);
+            return next;
+        });
+    };
+
+    const toggleAll = () => {
+        setChecked(prev =>
+            prev.size === records.length
+                ? new Set()
+                : new Set(records.map(r => r.label))
+        );
+    };
+
     const handleClear = () => {
-        clearTestResults();
+        if (checked.size === 0) return;
+        deleteTestResults([...checked]);
+        setChecked(new Set());
         refresh();
     };
 
@@ -139,7 +158,6 @@ const SchedulerDashboardPage = () => {
                     {record.demo ? 'Demo data' : 'Live data'}
                 </div>
 
-                <button className="sd-clear" onClick={handleClear}>Clear results</button>
             </div>
 
             {/* Summary stats */}
@@ -214,10 +232,27 @@ const SchedulerDashboardPage = () => {
 
             {/* Comparison across every scheduler that has a result */}
             <div className="sd-card">
-                <h3 className="sd-card-title">All Runs</h3>
+                <div className="sd-card-header">
+                    <h3 className="sd-card-title">All Runs</h3>
+                    <button
+                        className="sd-clear"
+                        onClick={handleClear}
+                        disabled={checked.size === 0}
+                    >
+                        {checked.size === 0 ? 'Clear selected' : `Clear selected (${checked.size})`}
+                    </button>
+                </div>
                 <table className="sd-table">
                     <thead>
                         <tr>
+                            <th>
+                                <input
+                                    type="checkbox"
+                                    checked={records.length > 0 && checked.size === records.length}
+                                    onChange={toggleAll}
+                                    title="Select all"
+                                />
+                            </th>
                             <th>Scheduler</th>
                             <th>Target</th>
                             <th>Duration</th>
@@ -236,6 +271,13 @@ const SchedulerDashboardPage = () => {
                                 className={r.label === record.label ? 'sd-row--active' : ''}
                                 onClick={() => setSelected(r.label)}
                             >
+                                <td onClick={e => e.stopPropagation()}>
+                                    <input
+                                        type="checkbox"
+                                        checked={checked.has(r.label)}
+                                        onChange={() => toggleCheck(r.label)}
+                                    />
+                                </td>
                                 <td>{r.label}</td>
                                 <td>{r.target}</td>
                                 <td>{r.duration}s</td>

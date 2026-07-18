@@ -58,11 +58,18 @@ const SCHEDULERS = {
             formula: 'score = (wmem x RTT) / avg_pacing_rate',
         },
         {
-            name: 'CWL',
+            name: 'CWL2',
             tag: 'congestion weighted linger, novel',
             novel: true,
-            desc: 'Our main MPTCP scheduler. It keeps the default linger term and multiplies it by a weight that reflects how full the congestion window is, nudging new data toward less busy paths. RTT stays implicit in the pacing rate, so there is no RTT squaring. When a path is idle the weight is one, so it can never do worse than the default in that case.',
-            formula: 'score = ((wmem << 32) / pace) x (SCALE + fill x ALPHA) / SCALE',
+            desc: 'Our second novel MPTCP scheduler. It keeps the default linger term and multiplies it by a weight that reflects how full the congestion window is, nudging new data toward less busy paths. RTT stays implicit in the pacing rate, so there is no RTT squaring. When a path is idle the weight is one and the score equals the default linger time, so CWL2 cannot regress below the baseline in the idle-window case.',
+            formula: 'score = ((wmem << 32) / pace) × (SCALE + fill × ALPHA) / SCALE',
+        },
+        {
+            name: 'EDF2',
+            tag: 'earliest delivery first, novel',
+            novel: true,
+            desc: 'Our third novel MPTCP scheduler. For every eligible subflow it estimates when the next segment would be delivered — roughly half an RTT away if the window has room, or about one and a half RTTs away if it is full — and picks the subflow with the earliest delivery. Revision 2 separates the head-of-line blocking guard from path selection using MinRTT as the reference, so the scheduler correctly returns to a path after a transient RTT spike instead of staying stuck on a single path.',
+            formula: 'delivery ≈ srtt / 2 (window free)  or  srtt × 1.5 (window full)',
         },
     ],
     MPQUIC: [
@@ -81,11 +88,11 @@ const SCHEDULERS = {
             formula: 'pick argmin(SmoothedRTT)',
         },
         {
-            name: 'BWLS',
-            tag: 'bandwidth latency score, novel',
+            name: 'BWA',
+            tag: 'bandwidth weighted arrival, novel',
             novel: true,
-            desc: 'Our novel MPQUIC strategy. It scores paths by one over RTT, caps sudden RTT spikes using a slow baseline, and gives uncongested paths a boost so fresh data goes where there is room. Ties go to the lower path ID.',
-            formula: 'score = 2 x [SendingAllowed] / (effRTT + 1ms)',
+            desc: 'Our novel MPQUIC strategy. For each eligible path it estimates how long a new packet would take to arrive, computed as the time to drain the in-flight queue at the path\'s current delivery rate plus half an RTT of propagation. A small stickiness margin keeps traffic on the current path unless a challenger is clearly better, avoiding unnecessary path flapping. A head-of-line blocking guard skips any path whose smoothed RTT exceeds three times the fastest path\'s minimum RTT.',
+            formula: 'arrival = inflight / (cwnd / srtt) + srtt / 2',
         },
     ],
 };
@@ -108,7 +115,8 @@ const HomePage = () => {
                 <p className="home-intro">
                     This project designs and evaluates packet schedulers for two multipath transport protocols.
                     A scheduler decides, for every unit of data, which network path should carry it. Below are the
-                    schedulers built for each protocol, including the two novel schedulers designed for this project.
+                    schedulers built for each protocol, including the three novel MPTCP schedulers (Hybrid, CWL2, EDF2)
+                    and one novel MPQUIC scheduler (BWA) designed for this project.
                 </p>
 
                 {/* Protocol tabs */}

@@ -46,8 +46,6 @@ const SCHED_LABELS = {
 };
 const prettyScheduler = (name) => SCHED_LABELS[name] || name;
 
-const DURATIONS = [10, 30, 60, 120, 300];
-
 // Basic IPv4 / hostname validation for the iperf3 target
 const isValidHost = (h) => {
     if (!h) return false;
@@ -58,12 +56,13 @@ const isValidHost = (h) => {
     return /^[a-zA-Z0-9.-]+$/.test(h);
 };
 const isValidPort = (p) => Number.isInteger(Number(p)) && Number(p) >= 1 && Number(p) <= 65535;
+const isValidDuration = (d) => Number.isInteger(Number(d)) && Number(d) >= 1;
 
 const TestRunnerPage = () => {
     const [schedulers, setSchedulers] = useState(FALLBACK_SCHEDULERS); // kernel names
     const [scheduler, setScheduler] = useState(FALLBACK_SCHEDULERS[0]);
     const [schedStatus, setSchedStatus] = useState(null); // { kind, text }
-    const [duration, setDuration] = useState(30);
+    const [duration, setDuration] = useState('30');
     const [serverIp, setServerIp] = useState('68.183.225.112'); // iperf3 target host
     const [serverPort, setServerPort] = useState(5201);          // iperf3 default port
     const [running, setRunning] = useState(false);
@@ -126,7 +125,7 @@ const TestRunnerPage = () => {
             label: schedulerLabel(),
             scheduler,
             target: `${serverIp}:${serverPort}`,
-            duration,
+            duration: Number(duration),
             demo: !!summaryObj.demo,
             summary: summaryObj,
             series: pts,
@@ -161,7 +160,7 @@ const TestRunnerPage = () => {
                 seriesRef.current = next;
                 return next;
             });
-            if (tickRef.current >= duration) {
+            if (tickRef.current >= Number(duration)) {
                 stopRun(true);
             }
         }, 1000);
@@ -179,7 +178,7 @@ const TestRunnerPage = () => {
         await fetch(`${BACKEND_URL}/api/iperf/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ duration, server_ip: serverIp, server_port: Number(serverPort) }),
+            body: JSON.stringify({ duration: Number(duration), server_ip: serverIp, server_port: Number(serverPort) }),
         });
         // poll live counters
         timerRef.current = setInterval(async () => {
@@ -277,7 +276,7 @@ const TestRunnerPage = () => {
             const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
             const summaryObj = {
                 scheduler,
-                duration,
+                duration: Number(duration),
                 target: `${serverIp}:${serverPort}`,
                 throughput_mbps: Number(avg.toFixed(2)),
                 retransmits: Math.floor(Math.random() * 40),
@@ -378,22 +377,22 @@ const TestRunnerPage = () => {
                 </div>
 
                 <div>
-                    <label className="tr-field-label">DURATION</label>
-                    <select
-                        className="tr-select tr-select--duration"
+                    <label className="tr-field-label">DURATION (seconds)</label>
+                    <input
+                        className={`tr-input tr-input--port ${duration && !isValidDuration(duration) ? 'tr-input--error' : ''}`}
+                        type="text"
                         value={duration}
                         disabled={running}
-                        onChange={(e) => setDuration(Number(e.target.value))}
-                    >
-                        {DURATIONS.map(d => <option key={d} value={d}>{d} seconds</option>)}
-                    </select>
+                        placeholder="e.g. 60"
+                        onChange={(e) => setDuration(e.target.value)}
+                    />
                 </div>
 
                 {!running ? (
                     <button
                         className="tr-btn tr-btn--start"
                         onClick={startRun}
-                        disabled={!isValidHost(serverIp) || !isValidPort(serverPort)}
+                        disabled={!isValidHost(serverIp) || !isValidPort(serverPort) || !isValidDuration(duration)}
                     >▶ Start</button>
                 ) : (
                     <button className="tr-btn tr-btn--stop" onClick={() => stopRun(false)}>■ Stop</button>

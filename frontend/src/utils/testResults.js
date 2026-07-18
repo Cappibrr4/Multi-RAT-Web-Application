@@ -35,6 +35,12 @@ export function clearTestResults() {
     localStorage.removeItem(KEY);
 }
 
+export function deleteTestResults(labels) {
+    const all = loadTestResults();
+    labels.forEach(l => delete all[l]);
+    localStorage.setItem(KEY, JSON.stringify(all));
+}
+
 // Build the { avg, max, min, latest } summary from a [{ t, mbps }] series.
 export function computeStats(series) {
     const vals = series.map(p => p.mbps);
