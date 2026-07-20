@@ -50,6 +50,13 @@ if ! kill -0 "$BACKEND_PID" 2>/dev/null; then
     exit 1
 fi
 
+# Install frontend dependencies if node_modules is missing or react-scripts is not found.
+if [[ ! -f frontend/node_modules/.bin/react-scripts ]]; then
+    echo "Frontend dependencies not found — running npm install..."
+    npm --prefix frontend install || { echo "ERROR: npm install failed." >&2; exit 1; }
+    echo "Dependencies installed."
+fi
+
 echo "Starting frontend -> http://localhost:3000  (Ctrl+C here stops both)"
 echo ""
 # Frontend runs in the foreground; when it exits, the EXIT trap stops the backend.
