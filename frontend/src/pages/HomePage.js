@@ -58,14 +58,14 @@ const SCHEDULERS = {
             formula: 'score = (wmem x RTT) / avg_pacing_rate',
         },
         {
-            name: 'CWL2',
+            name: 'CWL',
             tag: 'congestion weighted linger, novel',
             novel: true,
             desc: 'Our second novel MPTCP scheduler. It keeps the default linger term and multiplies it by a weight that reflects how full the congestion window is, nudging new data toward less busy paths. RTT stays implicit in the pacing rate, so there is no RTT squaring. When a path is idle the weight is one and the score equals the default linger time, so CWL2 cannot regress below the baseline in the idle-window case.',
             formula: 'score = ((wmem << 32) / pace) × (SCALE + fill × ALPHA) / SCALE',
         },
         {
-            name: 'EDF2',
+            name: 'EDF',
             tag: 'earliest delivery first, novel',
             novel: true,
             desc: 'Our third novel MPTCP scheduler. For every eligible subflow it estimates when the next segment would be delivered — roughly half an RTT away if the window has room, or about one and a half RTTs away if it is full — and picks the subflow with the earliest delivery. Revision 2 separates the head-of-line blocking guard from path selection using MinRTT as the reference, so the scheduler correctly returns to a path after a transient RTT spike instead of staying stuck on a single path.',
