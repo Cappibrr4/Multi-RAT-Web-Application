@@ -88,11 +88,18 @@ const SCHEDULERS = {
             formula: 'pick argmin(SmoothedRTT)',
         },
         {
-            name: 'BWA',
-            tag: 'bandwidth weighted arrival, novel',
+            name: 'BWLS',
+            tag: 'bandwidth latency score, novel',
             novel: true,
-            desc: 'Our novel MPQUIC strategy. For each eligible path it estimates how long a new packet would take to arrive, computed as the time to drain the in-flight queue at the path\'s current delivery rate plus half an RTT of propagation. A small stickiness margin keeps traffic on the current path unless a challenger is clearly better, avoiding unnecessary path flapping. A head-of-line blocking guard skips any path whose smoothed RTT exceeds three times the fastest path\'s minimum RTT.',
-            formula: 'arrival = inflight / (cwnd / srtt) + srtt / 2',
+            desc: 'Our first novel MPQUIC scheduler. It ranks paths with a score that combines damped latency and a capacity signal to reduce the path-flapping that Low Latency suffers. Each path maintains a slow running average of its RTT (baseline = 0.9 × baseline + 0.1 × RTT) and sudden spikes are capped at twice that baseline before scoring, so a brief latency jump at most halves the score instead of removing the path entirely. Paths that are not congested receive a ×2 score boost. The direct answer to LRTT-style flapping — but the binary capacity gate (SendingAllowed) causes oscillation when both paths are busy, which motivated the BWA design.',
+            formula: 'effRTT = min(RTT, 2 × baseline)   →   score = 1 / (effRTT + 1ms)   [×2 if SendingAllowed]',
+        },
+        {
+            name: 'BWA',
+            tag: 'bandwidth-weighted arrival, novel',
+            novel: true,
+            desc: 'Our novel MPQUIC scheduler — the counterpart of EDF on the MPQUIC side. For each eligible path it computes a genuine delivery-rate estimate (rate = cwnd / srtt) and uses it to predict when a new packet would actually arrive: the time to drain the in-flight queue at that rate, plus half an RTT of propagation. The path with the smallest arrival time wins. A 12.5 % stickiness margin (×0.875 on the incumbent\'s arrival) damps path-flapping by requiring a challenger to be clearly faster before a switch happens. A head-of-line guard skips any path whose MinRTT exceeds three times the fastest path\'s MinRTT, with a guard-free fallback if every path is bloated. This bandwidth signal — rather than the binary congestion gate used by BWLS — is what eliminates packet loss under spiking conditions (Setup B: 25 retransmissions vs BWLS\'s 102, zero packet loss vs 732).',
+            formula: 'rate = cwnd / srtt   →   arrival = inflight / rate + srtt / 2',
         },
     ],
 };
@@ -116,7 +123,7 @@ const HomePage = () => {
                     This project designs and evaluates packet schedulers for two multipath transport protocols.
                     A scheduler decides, for every unit of data, which network path should carry it. Below are the
                     schedulers built for each protocol, including the three novel MPTCP schedulers (Hybrid, CWL2, EDF2)
-                    and one novel MPQUIC scheduler (BWA) designed for this project.
+                    and two novel MPQUIC schedulers (BWLS, BWA) designed for this project.
                 </p>
 
                 {/* Protocol tabs */}
