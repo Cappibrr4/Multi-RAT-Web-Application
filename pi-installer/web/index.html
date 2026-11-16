@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-RAT Installer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0A2342;
+      color: #E2E8F0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    nav {
+      background: #071829;
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1E3A5F;
+    }
+    nav .brand   { font-weight: 700; font-size: 1rem; color: #fff; }
+    nav .sub     { font-size: 0.72rem; color: #7BAFD4; margin-top: 2px; }
+    nav .pill    { background: #0D9488; color: #fff; font-size: 0.7rem;
+                   font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+
+    /* Main */
+    main {
+      flex: 1;
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    h1 { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #94A3B8; margin-bottom: 2rem; }
+
+    /* Cards */
+    .card {
+      background: #0F2D4A;
+      border: 1px solid #1E3A5F;
+      border-radius: 12px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #0D9488;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Step box */
+    .steps { counter-reset: step; display: flex; flex-direction: column; gap: 0.9rem; }
+    .step  { display: flex; gap: 0.9rem; align-items: flex-start; }
+    .step-num {
+      counter-increment: step;
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      background: #0D9488;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; color: #fff;
+    }
+    .step-num::before { content: counter(step); }
+    .step-body { padding-top: 4px; }
+    .step-body strong { display: block; font-size: 0.95rem; color: #E2E8F0; margin-bottom: 2px; }
+    .step-body span   { font-size: 0.83rem; color: #94A3B8; }
+
+    /* Command box */
+    .cmd-box {
+      background: #071829;
+      border: 1px solid #0D9488;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-top: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .cmd-box code {
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: #5EEAD4;
+      word-break: break-all;
+    }
+    .copy-btn {
+      flex-shrink: 0;
+      background: #0D9488;
+      border: none;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #0f766e; }
+    .copy-btn.copied { background: #15803D; }
+
+    /* Status dots */
+    .status-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .status-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-green { background: #4ADE80; box-shadow: 0 0 6px #4ADE80; }
+
+    /* Terminal mockup */
+    .terminal {
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 0.8rem;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .terminal-bar {
+      background: #2d2d44;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .terminal-dot.r { background: #ff5f56; }
+    .terminal-dot.y { background: #ffbd2e; }
+    .terminal-dot.g { background: #27c93f; }
+    .terminal-title {
+      color: #94A3B8;
+      font-size: 0.7rem;
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 0.8rem 1rem;
+      overflow-x: auto;
+    }
+    .terminal-body .t-prompt { color: #4ADE80; }
+    .terminal-body .t-cmd    { color: #E2E8F0; }
+    .terminal-body .t-ok     { color: #4ADE80; }
+    .terminal-body .t-fail   { color: #F87171; }
+    .terminal-body .t-warn   { color: #FCD34D; }
+    .terminal-body .t-dim    { color: #64748B; }
+    .terminal-body .t-head   { color: #7BAFD4; font-weight: 600; }
+    .terminal-body div { white-space: pre; }
+
+    /* Info note */
+    .info-note {
+      background: #0D94881a;
+      border-left: 3px solid #0D9488;
+      padding: 0.7rem 1rem;
+      margin-top: 0.8rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.82rem;
+      color: #94A3B8;
+    }
+    .info-note strong { color: #5EEAD4; }
+
+    /* Collapsible */
+    .collapsible { cursor: pointer; user-select: none; }
+    .collapsible::after { content: ' +'; color: #0D9488; font-weight: 700; }
+    .collapsible.open::after { content: ' -'; }
+    .collapse-content { display: none; }
+    .collapse-content.open { display: block; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="brand">Multi-RAT Installer</div>
+    <div class="sub">Raspberry Pi &middot; Plug &amp; Play Setup</div>
+  </div>
+  <span class="pill">INSTALLER</span>
+</nav>
+
+<main>
+  <h1>Setup Menu</h1>
+  <p class="subtitle">Connected via ethernet cable. Follow the steps below on the target machine.</p>
+
+  <!-- Steps card -->
+  <div class="card">
+    <div class="card-title">How to Install (2 commands only)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <strong>Open a terminal on the target machine</strong>
+          <span>Press Ctrl+Alt+T on Ubuntu, or search "Terminal" in apps.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <strong>Download the installer script</strong>
+          <span>This downloads the install script from the Pi to your machine.</span>
+          <div class="cmd-box">
+            <code id="download-cmd"></code>
+            <button class="copy-btn" onclick="copyCmd('download-cmd')">Copy</button>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <strong>Run the installer</strong>
+          <span>This installs everything automatically. The kernel build takes 30-90 minutes. The machine reboots when done.</span>
+          <div class="cmd-box">
+            <code>sudo bash install.sh</code>
+            <button class="copy-btn" onclick="copyText('sudo bash install.sh')">Copy</button>
+          </div>
+          <div class="info-note">
+            <strong>Fully automatic:</strong> No further input needed. The script auto-detects the Pi, syncs the clock, installs all packages, builds the kernel, and reboots when done.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Status card -->
+  <div class="card">
+    <div class="card-title">Connection Status</div>
+    <div class="status-row">
+      <div class="status-item">
+        <div class="dot dot-green"></div>
+        <span>Pi installer online</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- What gets installed card -->
+  <div class="card">
+    <div class="card-title collapsible" onclick="toggleCollapse(this)">What Gets Installed</div>
+    <div class="collapse-content">
+      <p style="font-size:0.83rem; color:#94A3B8; line-height:1.8;">
+        <strong style="color:#5EEAD4;">Build tools &amp; networking:</strong> iperf3, mptcpize, bmon, htop, tcpdump, nload, ethtool, traceroute, net-tools, iproute2<br>
+        <strong style="color:#5EEAD4;">MPTCP Kernel:</strong> Custom mptcp_net-next kernel with 8 novel schedulers (Hybrid, CWL, EDF, LRTT, BLEST, ECF, RR, Redundant)<br>
+        <strong style="color:#5EEAD4;">Go + mp-quic:</strong> Go 1.20.14 + mp-quic with MPQUIC schedulers (BWA, BWLS)<br>
+        <strong style="color:#5EEAD4;">Dashboard:</strong> Multi-RAT Scheduler Dashboard (React frontend + Python backend)
+      </p>
+    </div>
+  </div>
+
+  <!-- Expected Output / Verification card -->
+  <div class="card">
+    <div class="card-title">After Installation &mdash; Expected Output</div>
+    <p style="font-size:0.83rem; color:#94A3B8; margin-bottom:0.5rem;">
+      After the machine reboots, run this to verify everything installed correctly:
+    </p>
+    <div class="cmd-box">
+      <code id="verify-cmd"></code>
+      <button class="copy-btn" onclick="copyCmd('verify-cmd')">Copy</button>
+    </div>
+
+    <p style="font-size:0.83rem; color:#94A3B8; margin-top:1rem; margin-bottom:0.4rem;">
+      You should see output like this:
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot r"></div>
+        <div class="terminal-dot y"></div>
+        <div class="terminal-dot g"></div>
+        <span class="terminal-title">Terminal &mdash; verify.sh</span>
+      </div>
+      <div class="terminal-body">
+<div class="t-dim">========================================</div>
+<div class="t-head"> Multi-RAT Installation Verification</div>
+<div class="t-dim">========================================</div>
+<div>&nbsp;</div>
+<div class="t-head">Kernel:</div>
+<div>  <span class="t-ok">[OK]</span>   Running MPTCP kernel: 7.3.0-rc4+</div>
+<div>  <span class="t-ok">[OK]</span>   MPTCP enabled (net.mptcp.enabled = 1)</div>
+<div>&nbsp;</div>
+<div class="t-head">MPTCP Schedulers:</div>
+<div>  <span class="t-ok">[OK]</span>   hybridsched.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_novelcwl.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_noveledf.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_lrtt.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_blest.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_ecf.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_rr.c present in kernel tree</div>
+<div>  <span class="t-ok">[OK]</span>   sched_redundant.c present in kernel tree</div>
+<div>&nbsp;</div>
+<div class="t-head">Go:</div>
+<div>  <span class="t-ok">[OK]</span>   Go installed: go1.20.14</div>
+<div>&nbsp;</div>
+<div class="t-head">mp-quic:</div>
+<div>  <span class="t-ok">[OK]</span>   mp-quic source at /opt/mp-quic</div>
+<div>  <span class="t-ok">[OK]</span>   MPQUIC scheduler.go present</div>
+<div>&nbsp;</div>
+<div class="t-head">Dashboard:</div>
+<div>  <span class="t-ok">[OK]</span>   multirat-dashboard service is running</div>
+<div>  <span class="t-ok">[OK]</span>   Dashboard responding at http://localhost:3000</div>
+<div>  <span class="t-ok">[OK]</span>   Backend API responding at http://localhost:5000</div>
+<div>&nbsp;</div>
+<div class="t-head">Networking Tools:</div>
+<div>  <span class="t-ok">[OK]</span>   iperf3</div>
+<div>  <span class="t-ok">[OK]</span>   mptcpize</div>
+<div>  <span class="t-ok">[OK]</span>   bmon</div>
+<div>  <span class="t-ok">[OK]</span>   htop</div>
+<div>  <span class="t-ok">[OK]</span>   tcpdump</div>
+<div>  <span class="t-ok">[OK]</span>   nload</div>
+<div>  <span class="t-ok">[OK]</span>   ethtool</div>
+<div>  <span class="t-ok">[OK]</span>   traceroute</div>
+<div>&nbsp;</div>
+<div class="t-dim">========================================</div>
+<div>  <span class="t-ok">22 passed</span>  |  <span class="t-fail">0 failed</span>  |  <span class="t-warn">0 warnings</span>  |  22 total</div>
+<div>&nbsp;</div>
+<div>  <span class="t-ok">All checks passed! Installation is complete.</span></div>
+<div>  Open http://localhost:3000 to use the dashboard.</div>
+<div class="t-dim">========================================</div>
+      </div>
+    </div>
+
+    <div class="info-note" style="margin-top:1rem;">
+      <strong>All items should show [OK].</strong> If anything shows [FAIL], re-run the installer. Warnings are usually resolved after a restart.
+    </div>
+  </div>
+
+  <!-- Quick verify card -->
+  <div class="card">
+    <div class="card-title">Quick Checks (Individual Commands)</div>
+    <div class="steps" style="gap:0.5rem;">
+      <div style="font-size:0.83rem; color:#94A3B8; margin-bottom:0.3rem;">Run these individually to check specific components:</div>
+      <div class="cmd-box">
+        <code>uname -r</code>
+        <button class="copy-btn" onclick="copyText('uname -r')">Copy</button>
+      </div>
+      <div style="font-size:0.78rem; color:#64748B; padding-left:0.2rem;">Expected: 7.x.x-rc4+ (MPTCP kernel version)</div>
+
+      <div class="cmd-box">
+        <code>sysctl net.mptcp.enabled</code>
+        <button class="copy-btn" onclick="copyText('sysctl net.mptcp.enabled')">Copy</button>
+      </div>
+      <div style="font-size:0.78rem; color:#64748B; padding-left:0.2rem;">Expected: net.mptcp.enabled = 1</div>
+
+      <div class="cmd-box">
+        <code>systemctl status multirat-dashboard</code>
+        <button class="copy-btn" onclick="copyText('systemctl status multirat-dashboard')">Copy</button>
+      </div>
+      <div style="font-size:0.78rem; color:#64748B; padding-left:0.2rem;">Expected: active (running)</div>
+    </div>
+  </div>
+
+  <!-- Check tools card -->
+  <div class="card">
+    <div class="card-title collapsible" onclick="toggleCollapse(this)">Pre-Install Check (Optional)</div>
+    <div class="collapse-content">
+      <p style="font-size:0.83rem; color:#94A3B8; margin-bottom:0.7rem;">
+        Run this before installing to see what's already present on the machine.
+      </p>
+      <div class="cmd-box">
+        <code id="check-cmd"></code>
+        <button class="copy-btn" onclick="copyCmd('check-cmd')">Copy</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const PI_HOST = window.location.origin;
+
+  // Copy helpers
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  function safeCopy(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+  function copyCmd(id) {
+    safeCopy(document.getElementById(id).textContent);
+    flashCopy(event.target);
+  }
+  function copyText(text) {
+    safeCopy(text);
+    flashCopy(event.target);
+  }
+  function flashCopy(btn) {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  }
+
+  // Collapsible sections
+  function toggleCollapse(el) {
+    el.classList.toggle('open');
+    const content = el.nextElementSibling;
+    content.classList.toggle('open');
+  }
+
+  // Set commands to use current host (IP or .local)
+  document.getElementById('download-cmd').textContent =
+    'curl ' + PI_HOST + '/install.sh -o install.sh';
+  document.getElementById('verify-cmd').textContent =
+    'curl ' + PI_HOST + '/verify.sh -o verify.sh && bash verify.sh';
+  document.getElementById('check-cmd').textContent =
+    'curl ' + PI_HOST + '/check.sh -o check.sh && bash check.sh';
+</script>
+</body>
+</html>

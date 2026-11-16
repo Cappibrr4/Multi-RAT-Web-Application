@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net" modified="2026-11-16T00:00:00.000Z" agent="Claude" version="24.0.0" type="device">
+  <diagram id="topo" name="Mininet Topology">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Host H1 -->
+        <mxCell id="h1" value="&lt;b&gt;H1&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="h1_label" value="Host" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="95" y="280" width="50" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Switch S1 (P4 multipath scheduler) -->
+        <mxCell id="s1" value="&lt;b&gt;S1&lt;/b&gt;" style="shape=mxgraph.cisco.switches.workgroup_switch;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;sketch=0;" vertex="1" parent="1">
+          <mxGeometry x="260" y="210" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1_label" value="P4 Multipath&lt;br&gt;Scheduler" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="265" y="270" width="90" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- Switch S2 (Path A relay) -->
+        <mxCell id="s2" value="&lt;b&gt;S2&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="490" y="100" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_label" value="Path A: low delay" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#0066CC;" vertex="1" parent="1">
+          <mxGeometry x="480" y="150" width="120" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Switch S3 (Path B relay) -->
+        <mxCell id="s3" value="&lt;b&gt;S3&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="490" y="310" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3_label" value="Path B: high delay" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="478" y="360" width="125" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Switch S4 (merge) -->
+        <mxCell id="s4" value="&lt;b&gt;S4&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="720" y="210" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4_label" value="Merge Switch" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="725" y="270" width="90" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Host H2 -->
+        <mxCell id="h2" value="&lt;b&gt;H2&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="920" y="200" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="h2_label" value="Host" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="935" y="280" width="50" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- H1 to S1 -->
+        <mxCell id="h1_s1" value="" style="endArrow=none;html=1;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="h1" target="s1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- S1 to S2 (Path A) -->
+        <mxCell id="s1_s2" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#0066CC;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="220" as="sourcePoint"/>
+            <mxPoint x="490" y="125" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S1 to S3 (Path B) -->
+        <mxCell id="s1_s3" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#CC0000;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="260" as="sourcePoint"/>
+            <mxPoint x="490" y="335" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S2 to S4 -->
+        <mxCell id="s2_s4" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#0066CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="125" as="sourcePoint"/>
+            <mxPoint x="720" y="225" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S3 to S4 -->
+        <mxCell id="s3_s4" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#CC0000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="335" as="sourcePoint"/>
+            <mxPoint x="720" y="255" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S4 to H2 -->
+        <mxCell id="s4_h2" value="" style="endArrow=none;html=1;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4" target="h2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Path A label on the line -->
+        <mxCell id="pa_label" value="&lt;font color=&quot;#0066CC&quot;&gt;&lt;b&gt;Path A&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="130" width="65" height="26" as="geometry"/>
+        </mxCell>
+
+        <!-- Path B label on the line -->
+        <mxCell id="pb_label" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;Path B&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="65" height="26" as="geometry"/>
+        </mxCell>
+
+        <!-- Figure caption -->
+        <mxCell id="caption" value="&lt;b&gt;Figure X: Mininet simulation topology for the P4 switch scheduling proof of concept&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="420" width="510" height="26" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,31 @@
+# APPLICATION OF CONCEPTS AND LEARNING
+
+This project drew on core SIT modules and, beyond them, required skills that fall outside of our undergraduate curriculum, particularly in kernel programming and controlled network measurement.
+
+## Application of Concepts from SIT Modules
+
+Several modules from the ICT programme provided the foundation for this project. Networking modules (ICT 1007 Computer Networks and ICT 2104 Network Design and Management) supplied the TCP/IP fundamentals used throughout: socket programming, subnetting, routing, policy-based forwarding and the use of tools such as iperf3, tcpdump and Wireshark. Understanding how TCP congestion control, retransmission and acknowledgement work was essential for reasoning about multipath scheduling and head-of-line blocking, which are central to both the BLEST scheduler and the P4 switch study. The Cisco testbed used in ITP1 and the tc netem emulation used in the lab baseline both draw on the switching and routing configuration skills taught in these modules.
+
+Operating Systems (ICT 1008) introduced process management, system calls, kernel and user space boundaries and the Linux command line. These concepts were applied directly when rebuilding the MPTCP kernel, packaging .deb files, writing the installer agent and managing system services. Understanding how a kernel module loads and how sysctl parameters expose kernel state was necessary for integrating the novel schedulers and for the mptcpize wrapper that lets unmodified applications use MPTCP.
+
+Software Engineering (ICT 2103) and Web Development modules informed the design of the developer API, the React and Flask monitoring dashboard carried over from ITP1 and the installation page served by the ESP32. Concepts such as interface abstraction, separation of concerns and API design were applied when building the multirat library, which hides MPTCP socket options and MP-QUIC session setup behind a single call. The REST endpoint the library uses to change the scheduler through the dashboard backend follows the request-response patterns taught in these modules.
+
+Programming modules in Python, C and Java provided the language foundations. The installer agent (agent.py) uses Python's standard library for HTTP, hashing and process management. The MPTCP kernel schedulers are written in C, following the kernel's coding conventions and data structures (struct sock, struct mptcp_sched_ops). The Go multipath library and the MP-QUIC codebase required learning a new language, which is discussed in the next subsection.
+
+Project Management (ICT 2112) was applied in planning the revised task decomposition, managing the Gantt chart and coordinating a six-person team across four parallel objectives with shared deadlines. The weekly supervisor meetings and the mid-project scope change (replacing security hardening with the network devices study) exercised the change management and stakeholder communication skills taught in this module.
+
+## New Concepts and Skills Acquired
+
+Beyond the taught curriculum, the project required several skills that the team learned during the course of the work.
+
+Linux kernel programming. Building a custom MPTCP kernel with novel schedulers compiled in required understanding the kernel build system (Kconfig, Makefiles), the MPTCP scheduler registration API and the constraints of kernel-space C (no floating point, no user-space libraries, limited stack depth). None of this is covered in the undergraduate programme. The team learned to patch the kernel source, add scheduler modules to the build configuration, cross-reference the upstream MPTCP documentation and debug scheduler behaviour using dmesg and mptcp_info.
+
+Embedded systems and USB networking. The ESP32-P4 installer required learning ESP-IDF (Espressif's development framework), the CDC-NCM USB device class and captive portal DNS. Making the microcontroller appear as a network adapter over a single USB-C cable and serve packages from an SD card combined embedded firmware, networking and web-serving skills that fall outside the standard ICT curriculum.
+
+Go programming. The MP-QUIC codebase and the Go version of the multirat library are written in Go. The team had no prior experience with Go and learned its concurrency model (goroutines and channels), its module and dependency system and its approach to error handling during the project. Adapting the mp-quic library to support per-connection scheduler selection required reading and modifying a research codebase with limited documentation.
+
+Network emulation and controlled measurement. Designing the lab testbed scenarios required learning tc netem for impairment injection (delay, jitter, bandwidth limits, periodic spikes), policy-based routing with ip rule and ip route and statistical test design (ten runs of 180 seconds per scenario, averaged). The sea trial added field measurement skills: planning data-collection scripts that log GPS position alongside per-path metrics, handling intermittent connectivity and processing results from conditions that cannot be repeated.
+
+P4 data plane programming. The theoretical study of multipath logic on network devices required learning P4, a domain-specific language for programming switch forwarding pipelines. This included understanding the P4_16 language, the BMv2 software switch, the Mininet emulation environment and the constraints of data-plane arithmetic (no division, fixed-width integers, no loops). Porting the Round-Robin and BLEST schedulers from kernel C to P4 required translating division operations into bit shifts and ratio comparisons into multiply-compare patterns, skills that are specific to hardware-oriented network programming and are not part of the ICT curriculum.
+
+Offline software distribution. Packaging an entire multipath networking stack as prebuilt Debian packages, complete with every dependency, so that it installs on an air-gapped machine without internet access was a new challenge. The team learned dpkg packaging, SHA-256 manifest generation, HTTP range-resume for interrupted downloads and the interaction between Ubuntu's package manager and the installer agent. Designing for offline use also influenced the developer API: the Go module proxy had to be bundled on the SD card so that go get works without the internet.
