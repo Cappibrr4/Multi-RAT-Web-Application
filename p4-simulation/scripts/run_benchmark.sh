@@ -207,15 +207,11 @@ echo ""
 
 # ── Generate summary ──────────────────────────────────────────────────────
 log "=== Summary ==="
-python3 << 'SUMEOF'
+python3 << SUMEOF
 import json, sys
 
-try:
-    with open(sys.argv[1] if len(sys.argv) > 1 else "REPORT_FILE_PLACEHOLDER") as f:
-        data = json.load(f)
-except:
-    with open("RESULTS_DIR/benchmark_TIMESTAMP.json".replace("RESULTS_DIR", "RESULTS_DIR_PLACEHOLDER").replace("TIMESTAMP", "TIMESTAMP_PLACEHOLDER")) as f:
-        data = json.load(f)
+with open("${REPORT_FILE}") as f:
+    data = json.load(f)
 
 print(f"\n{'Label':<30} {'Throughput':>12} {'RTT':>10} {'Jitter':>10} {'Loss':>8}")
 print("-" * 75)

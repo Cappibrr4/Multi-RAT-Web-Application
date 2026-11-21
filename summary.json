@@ -1,0 +1,38 @@
+[
+  {
+    "label": "RR_Symmetric",
+    "throughput_mbps": 22.93,
+    "avg_rtt_ms": 49.406,
+    "retransmits": 554
+  },
+  {
+    "label": "BLEST_Symmetric",
+    "throughput_mbps": 21.98,
+    "avg_rtt_ms": 49.607,
+    "retransmits": 830
+  },
+  {
+    "label": "RR_Asymmetric_50ms",
+    "throughput_mbps": 4.3,
+    "avg_rtt_ms": 91.632,
+    "retransmits": 523
+  },
+  {
+    "label": "BLEST_Asymmetric_50ms",
+    "throughput_mbps": 4.26,
+    "avg_rtt_ms": 90.438,
+    "retransmits": 448
+  },
+  {
+    "label": "RR_WiFi_vs_LTE",
+    "throughput_mbps": 0.24,
+    "avg_rtt_ms": 118.543,
+    "retransmits": 278
+  },
+  {
+    "label": "BLEST_WiFi_vs_LTE",
+    "throughput_mbps": 19.22,
+    "avg_rtt_ms": 55.373,
+    "retransmits": 238
+  }
+]
